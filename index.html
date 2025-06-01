@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>iuem</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      font-family: 'Dancing Script', cursive;
+      perspective: 1000px;
+    }
+
+    #scene {
+      width: 100vw;
+      height: 100vh;
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease-out;
+      position: relative;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+
+    .shooting-star {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to bottom, white, transparent);
+      opacity: 0.8;
+      border-radius: 50%;
+      transform: rotate(45deg);
+      animation: smoothShooting 2s ease-out forwards;
+      filter: drop-shadow(0 0 8px white);
+    }
+
+    @keyframes smoothShooting {
+      0% {
+        transform: translate(0, 0) rotate(45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-800px, 800px) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    .text {
+      position: absolute;
+      font-weight: bold;
+      white-space: nowrap;
+      animation: fall 14s linear forwards;
+    }
+
+    @keyframes fall {
+      0% { top: -50px; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 110%; opacity: 0; }
+    }
+
+    .heart {
+      position: absolute;
+      color: red;
+      font-size: 22px;
+      animation: flyUp 5s ease-in forwards;
+      pointer-events: none;
+      text-shadow: 0 0 6px pink;
+    }
+
+    @keyframes flyUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-250px) scale(1.8); opacity: 0; }
+    }
+
+    .glow {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle, rgba(255,182,193,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="scene">
+    <div class="glow"></div>
+  </div>
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2023/04/26/audio_c7694c8d58.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const scene = document.getElementById('scene');
+
+    // Sao tĩnh
+    for (let i = 0; i < 300; i++) {
+      const star = document.createElement("div");
+      const size = Math.random() * 2;
+      star.classList.add("star");
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.top = Math.random() * 100 + "vh";
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.opacity = Math.random();
+      scene.appendChild(star);
+    }
+
+    const messages = [
+      "Buồn Xấu Lắm",
+      "Vui Cười Lênn",
+      "ILU",
+      "Ngủ Sớm Điiii",
+      "Giữ sức Khỏe đóo",
+      "Đừng có buồnnnnnn",
+      "Buồn Xấu Lắm",
+      "Đừng có buồn nhaaaa"
+    ];
+
+    function createText() {
+      const text = document.createElement("div");
+      text.className = "text";
+      text.innerText = messages[Math.floor(Math.random() * messages.length)];
+      text.style.left = Math.random() * 90 + "vw";
+      text.style.fontSize = (20 + Math.random() * 12) + "px";
+      text.style.animationDuration = (10 + Math.random() * 6) + "s";
+
+      const usePink = Math.random() < 0.6;
+      const color = usePink ? "#ff69b4" : "#ffffff";
+      text.style.color = color;
+
+      text.style.textShadow = color === "#ffffff"
+        ? "0 0 10px #ffffff, 0 0 20px #cccccc"
+        : "0 0 12px #ff99cc, 0 0 24px #ff69b4";
+
+      scene.appendChild(text);
+      setTimeout(() => text.remove(), 18000);
+    }
+
+    setInterval(createText, 600);
+
+    function createHeart(x, y) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerText = "❤️";
+      heart.style.left = x + "px";
+      heart.style.top = y + "px";
+      heart.style.fontSize = (20 + Math.random() * 24) + "px";
+      scene.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }
+
+    setInterval(() => {
+      const x = Math.random() * window.innerWidth;
+      const y = window.innerHeight - 40;
+      createHeart(x, y);
+    }, 500);
+
+    document.addEventListener("click", (e) => {
+      for (let i = 0; i < 4; i++) {
+        const offsetX = e.clientX + (Math.random() * 60 - 30);
+        const offsetY = e.clientY + (Math.random() * 30 - 15);
+        createHeart(offsetX, offsetY);
+      }
+    });
+
+    function createShootingStar() {
+      const star = document.createElement("div");
+      star.className = "shooting-star";
+      star.style.top = Math.random() * window.innerHeight * 0.4 + "px";
+      star.style.left = (window.innerWidth * 0.7 + Math.random() * window.innerWidth * 0.3) + "px";
+      scene.appendChild(star);
+      setTimeout(() => star.remove(), 3000);
+    }
+
+    setInterval(() => {
+      if (Math.random() < 0.3) createShootingStar();
+    }, 1000);
+
+    document.addEventListener("mousemove", (e) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const offsetX = (e.clientX - centerX) / centerX;
+      const offsetY = (e.clientY - centerY) / centerY;
+      const rotateY = offsetX * 10;
+      const rotateX = -offsetY * 10;
+      scene.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+  </script>
+</body>
+</html>
